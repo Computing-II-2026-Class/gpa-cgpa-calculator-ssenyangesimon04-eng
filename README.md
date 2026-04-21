@@ -5,101 +5,130 @@
 #include <stdio.h>
 
 int main() {
-    // Semester 1 Course Data
-    float s1_scores[8];
-    int s1_credits[] = {4, 3, 3, 3, 3, 3, 2, 3};
-    char* s1_codes[] = {"TEMB 1101", "TEMB 1102", "TEMB 1103", "TEMB 1104", 
-                        "TEMB 1105", "TEMB 1106", "TEMB 1107", "TEMB 1108"};
     
-    // Semester 2 Course Data
-    float s2_scores[8];
-    int s2_credits[] = {4, 3, 3, 3, 3, 3, 3, 3};
-    char* s2_codes[] = {"TEMB 1201", "TEMB 1202", "TEMB 1203", "TEMB 1204", 
-                        "TEMB 1205", "TEMB 1206", "TEMB 1207", "TEMB 1208"};
-
-    float s1_weighted_sum = 0, s2_weighted_sum = 0;
-    int s1_total_credits = 0, s2_total_credits = 0;
-    float gp, sem1_gpa, sem2_gpa, cgpa;
-    char grade;
-
-    // --- Input Semester I ---
+    /* Declare variables here */
+    int scores[16];
+    int credits_sem1[8] = {4, 3, 3, 3, 3, 3, 2, 3};
+    int credits_sem2[8] = {4, 3, 3, 3, 3, 3, 3, 3};
+    char *codes_sem1[8] = {"TEMB1101", "TEMB1102", "TEMB1103", "TEMB1104",
+                           "TEMB1105", "TEMB1106", "TEMB1107", "TEMB1108"};
+    char *codes_sem2[8] = {"TEMB1201", "TEMB1202", "TEMB1203", "TEMB1204",
+                           "TEMB1205", "TEMB1206", "TEMB1207", "TEMB1208"};
+    int grade_points[16];
+    char grades[16];
+    int weighted[16];
+    int total_credits_sem1 = 0, total_credits_sem2 = 0;
+    int total_weighted_sem1 = 0, total_weighted_sem2 = 0;
+    float gpa_sem1, gpa_sem2, cgpa;
+    int i;
+    
+    /* Read 16 scores */
     printf("Enter scores for Semester I:\n");
-    for (int i = 0; i < 8; i++) {
-        printf("%s: ", s1_codes[i]);
-        scanf("%f", &s1_scores[i]);
-        if (s1_scores[i] < 0 || s1_scores[i] > 100) {
+    for (i = 0; i < 8; i++) {
+        printf("%s: ", codes_sem1[i]);
+        scanf("%d", &scores[i]);
+    }
+    printf("Enter scores for Semester II:\n");
+    for (i = 8; i < 16; i++) {
+        printf("%s: ", codes_sem2[i-8]);
+        scanf("%d", &scores[i]);
+    }
+    
+    /* Validate input */
+    for (i = 0; i < 16; i++) {
+        if (scores[i] < 0 || scores[i] > 100) {
             printf("Invalid score entered\n");
-            return 0;
+            return 1;
         }
     }
-
-    // --- Input Semester II ---
-    printf("\nEnter scores for Semester II:\n");
-    for (int i = 0; i < 8; i++) {
-        printf("%s: ", s2_codes[i]);
-        scanf("%f", &s2_scores[i]);
-        if (s2_scores[i] < 0 || s2_scores[i] > 100) {
-            printf("Invalid score entered\n");
-            return 0;
+    
+    /* Determine grades and grade points */
+    for (i = 0; i < 16; i++) {
+        if (scores[i] >= 80) {
+            grade_points[i] = 5;
+            grades[i] = 'A';
+        } else if (scores[i] >= 70) {
+            grade_points[i] = 4;
+            grades[i] = 'B';
+        } else if (scores[i] >= 60) {
+            grade_points[i] = 3;
+            grades[i] = 'C';
+        } else if (scores[i] >= 50) {
+            grade_points[i] = 2;
+            grades[i] = 'D';
+        } else {
+            grade_points[i] = 0;
+            grades[i] = 'F';
         }
     }
-
-    printf("\n--- FULL ACADEMIC REPORT ---\n");
-
-    // Process Semester I
-    printf("\nSemester I Details:\n");
-    for (int i = 0; i < 8; i++) {
-        if (s1_scores[i] >= 80) { grade = 'A'; gp = 5.0; }
-        else if (s1_scores[i] >= 70) { grade = 'B'; gp = 4.0; }
-        else if (s1_scores[i] >= 60) { grade = 'C'; gp = 3.0; }
-        else if (s1_scores[i] >= 50) { grade = 'D'; gp = 2.0; }
-        else { grade = 'F'; gp = 0.0; }
-
-        float weighted = gp * s1_credits[i];
-        s1_weighted_sum += weighted;
-        s1_total_credits += s1_credits[i];
-
-        printf("%s | Score: %.1f | Grade: %c | GP: %.1f | CU: %d | Weighted: %.1f\n", 
-               s1_codes[i], s1_scores[i], grade, gp, s1_credits[i], weighted);
+    
+    /* Compute Semester I GPA */
+    for (i = 0; i < 8; i++) {
+        weighted[i] = grade_points[i] * credits_sem1[i];
+        total_credits_sem1 += credits_sem1[i];
+        total_weighted_sem1 += weighted[i];
     }
-
-    // Process Semester II
-    printf("\nSemester II Details:\n");
-    for (int i = 0; i < 8; i++) {
-        if (s2_scores[i] >= 80) { grade = 'A'; gp = 5.0; }
-        else if (s2_scores[i] >= 70) { grade = 'B'; gp = 4.0; }
-        else if (s2_scores[i] >= 60) { grade = 'C'; gp = 3.0; }
-        else if (s2_scores[i] >= 50) { grade = 'D'; gp = 2.0; }
-        else { grade = 'F'; gp = 0.0; }
-
-        float weighted = gp * s2_credits[i];
-        s2_weighted_sum += weighted;
-        s2_total_credits += s2_credits[i];
-
-        printf("%s | Score: %.1f | Grade: %c | GP: %.1f | CU: %d | Weighted: %.1f\n", 
-               s2_codes[i], s2_scores[i], grade, gp, s2_credits[i], weighted);
+    gpa_sem1 = (float)total_weighted_sem1 / total_credits_sem1;
+    
+    /* Compute Semester II GPA */
+    for (i = 8; i < 16; i++) {
+        weighted[i] = grade_points[i] * credits_sem2[i-8];
+        total_credits_sem2 += credits_sem2[i-8];
+        total_weighted_sem2 += weighted[i];
     }
-
-    // Calculations
-    sem1_gpa = s1_weighted_sum / s1_total_credits;
-    sem2_gpa = s2_weighted_sum / s2_total_credits;
-    cgpa = (s1_weighted_sum + s2_weighted_sum) / (s1_total_credits + s2_total_credits);
-
-    // Determine Classification
-    char* class;
-    if (cgpa >= 4.40) class = "First Class";
-    else if (cgpa >= 3.60) class = "Second Class Upper";
-    else if (cgpa >= 2.80) class = "Second Class Lower";
-    else if (cgpa >= 2.00) class = "Pass";
-    else class = "Fail";
-
-    // Summary Output
-    printf("\n----------------------------------\n");
-    printf("Semester I GPA: %.2f\n", sem1_gpa);
-    printf("Semester II GPA: %.2f\n", sem2_gpa);
+    gpa_sem2 = (float)total_weighted_sem2 / total_credits_sem2;
+    
+    /* Compute CGPA */
+    cgpa = (float)(total_weighted_sem1 + total_weighted_sem2) / (total_credits_sem1 + total_credits_sem2);
+    
+    /* Determine classification */
+    char *classification;
+    if (cgpa >= 4.40)
+        classification = "First Class";
+    else if (cgpa >= 3.60)
+        classification = "Second Class Upper";
+    else if (cgpa >= 2.80)
+        classification = "Second Class Lower";
+    else if (cgpa >= 2.00)
+        classification = "Pass";
+    else
+        classification = "Fail";
+    
+    /* Display full academic report */
+    printf("\n==================================================\n");
+    printf("               ACADEMIC REPORT\n");
+    printf("==================================================\n\n");
+    
+    printf("SEMESTER I\n");
+    printf("--------------------------------------------------\n");
+    printf("%-12s %-6s %-5s %-10s %-5s %-10s\n", 
+           "Course", "Score", "Grade", "Grade Point", "Credits", "Weighted");
+    printf("--------------------------------------------------\n");
+    for (i = 0; i < 8; i++) {
+        printf("%-12s %-6d %-5c %-10d %-5d %-10d\n",
+               codes_sem1[i], scores[i], grades[i], grade_points[i],
+               credits_sem1[i], weighted[i]);
+    }
+    printf("--------------------------------------------------\n");
+    printf("Semester I GPA: %.2f\n\n", gpa_sem1);
+    
+    printf("SEMESTER II\n");
+    printf("--------------------------------------------------\n");
+    printf("%-12s %-6s %-5s %-10s %-5s %-10s\n",
+           "Course", "Score", "Grade", "Grade Point", "Credits", "Weighted");
+    printf("--------------------------------------------------\n");
+    for (i = 8; i < 16; i++) {
+        printf("%-12s %-6d %-5c %-10d %-5d %-10d\n",
+               codes_sem2[i-8], scores[i], grades[i], grade_points[i],
+               credits_sem2[i-8], weighted[i]);
+    }
+    printf("--------------------------------------------------\n");
+    printf("Semester II GPA: %.2f\n\n", gpa_sem2);
+    
+    printf("Semester I GPA: %.2f\n", gpa_sem1);
+    printf("Semester II GPA: %.2f\n", gpa_sem2);
     printf("CGPA: %.2f\n", cgpa);
-    printf("Classification: %s\n", class);
-    printf("----------------------------------\n");
+    printf("Classification: %s\n", classification);
 
     return 0;
 }
