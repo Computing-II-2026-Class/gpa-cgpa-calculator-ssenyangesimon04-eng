@@ -130,5 +130,6 @@ int main() {
     printf("CGPA: %.2f\n", cgpa);
     printf("Classification: %s\n", classification);
 
+
     return 0;
 }
